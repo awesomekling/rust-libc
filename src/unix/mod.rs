@@ -1482,6 +1482,9 @@ cfg_if! {
     } else if #[cfg(target_os = "haiku")] {
         mod haiku;
         pub use self::haiku::*;
+    } else if #[cfg(target_os = "serenity")] {
+        mod serenity;
+        pub use self::serenity::*;
     } else if #[cfg(target_os = "hermit")] {
         mod hermit;
         pub use self::hermit::*;
