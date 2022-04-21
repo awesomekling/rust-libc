@@ -57,7 +57,9 @@ pub type time_t = i64;
 
 #[cfg_attr(feature = "extra_traits", derive(Debug))]
 pub enum timezone {}
+
 impl ::Copy for timezone {}
+
 impl ::Clone for timezone {
     fn clone(&self) -> timezone {
         *self
@@ -139,24 +141,24 @@ s! {
     }
 
     pub struct lconv {
-        pub currency_symbol: *const ::c_char,
         pub decimal_point: *const ::c_char,
-        pub frac_digits: ::c_char,
+        pub thousands_sep: *const ::c_char,
         pub grouping: *const ::c_char,
         pub int_curr_symbol: *const ::c_char,
-        pub int_frac_digits: ::c_char,
+        pub currency_symbol: *const ::c_char,
         pub mon_decimal_point: *const ::c_char,
-        pub mon_grouping: *const ::c_char,
         pub mon_thousands_sep: *const ::c_char,
+        pub mon_grouping: *const ::c_char,
         pub negative_sign: *const ::c_char,
-        pub n_cs_precedes: ::c_char,
-        pub n_sep_by_space: ::c_char,
-        pub n_sign_posn: ::c_char,
         pub positive_sign: *const ::c_char,
+        pub int_frac_digits: ::c_char,
+        pub frac_digits: ::c_char,
         pub p_cs_precedes: ::c_char,
         pub p_sep_by_space: ::c_char,
+        pub n_cs_precedes: ::c_char,
+        pub n_sep_by_space: ::c_char,
         pub p_sign_posn: ::c_char,
-        pub thousands_sep: *const ::c_char,
+        pub n_sign_posn: ::c_char,
     }
 
     pub struct passwd {
@@ -171,17 +173,20 @@ s! {
 
     pub struct sigaction {
         pub sa_sigaction: ::sighandler_t,
-        pub sa_flags: ::c_ulong,
-        pub sa_restorer: ::Option<extern fn()>,
         pub sa_mask: ::sigset_t,
+        pub sa_flags: ::c_int,
     }
 
     pub struct siginfo_t {
         pub si_signo: ::c_int,
-        pub si_errno: ::c_int,
         pub si_code: ::c_int,
-        _pad: [::c_int; 29],
-        _align: [usize; 0],
+        pub si_errno: ::c_int,
+        pub si_pid: ::c_int,
+        pub si_uid: ::uid_t,
+        pub si_addr: *mut ::c_void,
+        pub si_status: ::c_int,
+        pub si_band: ::c_int,
+        pub si_value: *mut ::c_void,
     }
 
     pub struct sockaddr {
@@ -221,10 +226,6 @@ s! {
         pub st_mtime_nsec: ::c_long,
         pub st_ctime: ::time_t,
         pub st_ctime_nsec: ::c_long,
-        pub st_flags: u32,
-        pub st_gen: u32,
-        pub st_birthtime: ::time_t,
-        pub st_birthtime_nsec: ::c_long,
     }
 
     pub struct statvfs {
@@ -292,10 +293,7 @@ pub const AT_FDCWD: ::c_int = -100;
 pub const AT_SYMLINK_NOFOLLOW: ::c_int = 0x100;
 pub const AT_REMOVEDIR: ::c_int = 0x200;
 
-
-// FIXME: relibc {
 pub const RTLD_DEFAULT: *mut ::c_void = 0i64 as *mut ::c_void;
-// }
 
 // dlfcn.h
 pub const RTLD_LAZY: ::c_int = 0x0001;
@@ -448,61 +446,61 @@ pub const F_GETFD: ::c_int = 1;
 pub const F_SETFD: ::c_int = 2;
 pub const F_GETFL: ::c_int = 3;
 pub const F_SETFL: ::c_int = 4;
-// FIXME: relibc {
 pub const F_DUPFD_CLOEXEC: ::c_int = ::F_DUPFD;
-// }
-pub const FD_CLOEXEC: ::c_int = 0x0100_0000;
-pub const O_RDONLY: ::c_int = 0x0001_0000;
-pub const O_WRONLY: ::c_int = 0x0002_0000;
-pub const O_RDWR: ::c_int = 0x0003_0000;
+
+pub const FD_CLOEXEC: ::c_int = 1;
+pub const O_RDONLY: ::c_int = (1 << 0);
+pub const O_WRONLY: ::c_int = (1 << 2);
+pub const O_RDWR: ::c_int = (O_RDONLY | O_WRONLY);
+pub const O_CREAT: ::c_int = (1 << 3);
+pub const O_EXCL: ::c_int = (1 << 4);
+pub const O_TRUNC: ::c_int = (1 << 6);
+pub const O_APPEND: ::c_int = (1 << 7);
+pub const O_NONBLOCK: ::c_int = (1 << 8);
+pub const O_DIRECTORY: ::c_int = (1 << 9);
+pub const O_NOFOLLOW: ::c_int = (1 << 10);
+pub const O_CLOEXEC: ::c_int = (1 << 11);
+
+// FIXME: These don't exist in SerenityOS at the moment:
 pub const O_ACCMODE: ::c_int = 0x0003_0000;
-pub const O_NONBLOCK: ::c_int = 0x0004_0000;
-pub const O_APPEND: ::c_int = 0x0008_0000;
 pub const O_SHLOCK: ::c_int = 0x0010_0000;
 pub const O_EXLOCK: ::c_int = 0x0020_0000;
 pub const O_ASYNC: ::c_int = 0x0040_0000;
 pub const O_FSYNC: ::c_int = 0x0080_0000;
-pub const O_CLOEXEC: ::c_int = 0x0100_0000;
-pub const O_CREAT: ::c_int = 0x0200_0000;
-pub const O_TRUNC: ::c_int = 0x0400_0000;
-pub const O_EXCL: ::c_int = 0x0800_0000;
-pub const O_DIRECTORY: ::c_int = 0x1000_0000;
 pub const O_PATH: ::c_int = 0x2000_0000;
 pub const O_SYMLINK: ::c_int = 0x4000_0000;
-// Negative to allow it to be used as int
-// FIXME: Fix negative values missing from includes
-pub const O_NOFOLLOW: ::c_int = -0x8000_0000;
 
 // netdb.h
 pub const AI_PASSIVE: ::c_int = 0x0001;
 pub const AI_CANONNAME: ::c_int = 0x0002;
 pub const AI_NUMERICHOST: ::c_int = 0x0004;
-pub const AI_V4MAPPED: ::c_int = 0x0008;
-pub const AI_ALL: ::c_int = 0x0010;
-pub const AI_ADDRCONFIG: ::c_int = 0x0020;
-pub const AI_NUMERICSERV: ::c_int = 0x0400;
-pub const EAI_BADFLAGS: ::c_int = -1;
-pub const EAI_NONAME: ::c_int = -2;
-pub const EAI_AGAIN: ::c_int = -3;
-pub const EAI_FAIL: ::c_int = -4;
-pub const EAI_NODATA: ::c_int = -5;
-pub const EAI_FAMILY: ::c_int = -6;
-pub const EAI_SOCKTYPE: ::c_int = -7;
-pub const EAI_SERVICE: ::c_int = -8;
-pub const EAI_ADDRFAMILY: ::c_int = -9;
-pub const EAI_MEMORY: ::c_int = -10;
-pub const EAI_SYSTEM: ::c_int = -11;
-pub const EAI_OVERFLOW: ::c_int = -12;
+pub const AI_NUMERICSERV: ::c_int = 0x0008;
+pub const AI_V4MAPPED: ::c_int = 0x0010;
+pub const AI_ALL: ::c_int = 0x0020;
+pub const AI_ADDRCONFIG: ::c_int = 0x0040;
+
+pub const EAI_ADDRFAMILY: ::c_int = 1;
+pub const EAI_AGAIN: ::c_int = 2;
+pub const EAI_BADFLAGS: ::c_int = 3;
+pub const EAI_FAIL: ::c_int = 4;
+pub const EAI_FAMILY: ::c_int = 5;
+pub const EAI_MEMORY: ::c_int = 6;
+pub const EAI_NODATA: ::c_int = 7;
+pub const EAI_NONAME: ::c_int = 8;
+pub const EAI_SERVICE: ::c_int = 9;
+pub const EAI_SOCKTYPE: ::c_int = 10;
+pub const EAI_SYSTEM: ::c_int = 11;
+pub const EAI_OVERFLOW: ::c_int = 12;
+
 pub const NI_MAXHOST: ::c_int = 1025;
 pub const NI_MAXSERV: ::c_int = 32;
-pub const NI_NUMERICHOST: ::c_int = 0x0001;
-pub const NI_NUMERICSERV: ::c_int = 0x0002;
-pub const NI_NOFQDN: ::c_int = 0x0004;
+pub const NI_NUMERICHOST: ::c_int = 1;
+pub const NI_NUMERICSERV: ::c_int = 2;
 pub const NI_NAMEREQD: ::c_int = 0x0008;
+pub const NI_NOFQDN: ::c_int = 0x0004;
 pub const NI_DGRAM: ::c_int = 0x0010;
 
 // netinet/in.h
-// FIXME: relibc {
 pub const IP_TTL: ::c_int = 2;
 pub const IPV6_UNICAST_HOPS: ::c_int = 16;
 pub const IPV6_MULTICAST_IF: ::c_int = 17;
@@ -516,13 +514,10 @@ pub const IP_MULTICAST_TTL: ::c_int = 33;
 pub const IP_MULTICAST_LOOP: ::c_int = 34;
 pub const IP_ADD_MEMBERSHIP: ::c_int = 35;
 pub const IP_DROP_MEMBERSHIP: ::c_int = 36;
-// }
 
 // netinet/tcp.h
 pub const TCP_NODELAY: ::c_int = 1;
-// FIXME: relibc {
 pub const TCP_KEEPIDLE: ::c_int = 1;
-// }
 
 // poll.h
 pub const POLLIN: ::c_short = 0x001;
@@ -650,17 +645,15 @@ pub const EXIT_SUCCESS: ::c_int = 0;
 pub const EXIT_FAILURE: ::c_int = 1;
 
 // sys/ioctl.h
-// fixme: relibc {
-pub const FIONBIO: ::c_ulong = 0x5421;
+pub const FIONBIO: ::c_ulong = 40;
 pub const FIOCLEX: ::c_ulong = 0x5451;
-// }
-pub const TCGETS: ::c_ulong = 0x5401;
-pub const TCSETS: ::c_ulong = 0x5402;
-pub const TCFLSH: ::c_ulong = 0x540b;
-pub const TIOCGPGRP: ::c_ulong = 0x540f;
-pub const TIOCSPGRP: ::c_ulong = 0x5410;
-pub const TIOCGWINSZ: ::c_ulong = 0x5413;
-pub const TIOCSWINSZ: ::c_ulong = 0x5414;
+pub const TCGETS: ::c_ulong = 2;
+pub const TCSETS: ::c_ulong = 3;
+pub const TCFLSH: ::c_ulong = 4;
+pub const TIOCGPGRP: ::c_ulong = 0;
+pub const TIOCSPGRP: ::c_ulong = 1;
+pub const TIOCGWINSZ: ::c_ulong = 7;
+pub const TIOCSWINSZ: ::c_ulong = 11;
 
 // sys/mman.h
 pub const PROT_NONE: ::c_int = 0x0000;
@@ -684,23 +677,27 @@ pub const FD_SETSIZE: usize = 1024;
 
 // sys/socket.h
 pub const AF_INET: ::c_int = 2;
-pub const AF_INET6: ::c_int = 10;
+pub const AF_INET6: ::c_int = 3;
 pub const AF_UNIX: ::c_int = 1;
 pub const AF_UNSPEC: ::c_int = 0;
-pub const PF_INET: ::c_int = 2;
-pub const PF_INET6: ::c_int = 10;
-pub const PF_UNIX: ::c_int = 1;
-pub const PF_UNSPEC: ::c_int = 0;
-pub const MSG_CTRUNC: ::c_int = 8;
-pub const MSG_DONTROUTE: ::c_int = 4;
+pub const PF_INET: ::c_int = AF_INET;
+pub const PF_INET6: ::c_int = AF_INET6;
+pub const PF_UNIX: ::c_int = AF_UNIX;
+pub const PF_UNSPEC: ::c_int = AF_UNSPEC;
+pub const MSG_TRUNC: ::c_int = 0x1;
+pub const MSG_CTRUNC: ::c_int = 0x2;
+pub const MSG_PEEK: ::c_int = 0x4;
+pub const MSG_OOB: ::c_int = 0x8;
+pub const MSG_DONTROUTE: ::c_int = 0x10;
+pub const MSG_WAITALL: ::c_int = 0x20;
+
+// FIXME: Not implemented on SerenityOS
 pub const MSG_EOR: ::c_int = 128;
-pub const MSG_OOB: ::c_int = 1;
-pub const MSG_PEEK: ::c_int = 2;
-pub const MSG_TRUNC: ::c_int = 32;
-pub const MSG_WAITALL: ::c_int = 256;
-pub const SHUT_RD: ::c_int = 0;
-pub const SHUT_WR: ::c_int = 1;
-pub const SHUT_RDWR: ::c_int = 2;
+
+pub const SHUT_RD: ::c_int = 1;
+pub const SHUT_WR: ::c_int = 2;
+pub const SHUT_RDWR: ::c_int = 3;
+
 pub const SO_DEBUG: ::c_int = 1;
 pub const SO_REUSEADDR: ::c_int = 2;
 pub const SO_TYPE: ::c_int = 3;
@@ -728,6 +725,7 @@ pub const SO_SNDBUFFORCE: ::c_int = 32;
 pub const SO_RCVBUFFORCE: ::c_int = 33;
 pub const SO_PROTOCOL: ::c_int = 38;
 pub const SO_DOMAIN: ::c_int = 39;
+
 pub const SOCK_STREAM: ::c_int = 1;
 pub const SOCK_DGRAM: ::c_int = 2;
 pub const SOCK_NONBLOCK: ::c_int = 0o4_000;
@@ -1032,7 +1030,7 @@ extern "C" {
         attr: *mut pthread_condattr_t,
         clock_id: ::clockid_t,
     ) -> ::c_int;
-    pub fn pthread_set_name_np(thread: ::pthread_t, name: *const ::c_char) -> ::c_int;
+    pub fn pthread_setname_np(thread: ::pthread_t, name: *const ::c_char) -> ::c_int;
 
     // pwd.h
     pub fn getpwuid_r(
