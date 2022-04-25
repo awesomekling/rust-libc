@@ -1055,6 +1055,9 @@ extern "C" {
     pub fn pledge(promises: *const ::c_char, execpromises: *const ::c_char) -> ::c_int;
     pub fn unveil(path: *const ::c_char, permissions: *const ::c_char) -> ::c_int;
 
+    // stdlib.h
+    pub fn arc4random_buf(buffer: *mut ::c_void, size: ::size_t);
+
     // malloc.h
     pub fn memalign(align: ::size_t, size: ::size_t) -> *mut ::c_void;
 
