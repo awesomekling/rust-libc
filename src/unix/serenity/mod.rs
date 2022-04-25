@@ -1052,6 +1052,8 @@ extern "C" {
 
     // unistd.h
     pub fn pipe2(fds: *mut ::c_int, flags: ::c_int) -> ::c_int;
+    pub fn pledge(promises: *const ::c_char, execpromises: *const ::c_char) -> ::c_int;
+    pub fn unveil(path: *const ::c_char, permissions: *const ::c_char) -> ::c_int;
 
     // malloc.h
     pub fn memalign(align: ::size_t, size: ::size_t) -> *mut ::c_void;
