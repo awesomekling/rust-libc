@@ -316,10 +316,10 @@ s! {
     }
 
     pub struct dl_phdr_info {
-        dlpi_addr: Elf_Addr,
-        dlpi_name: *const ::c_char,
-        dlpi_phdr: *const Elf_Phdr,
-        dlpi_phnum: Elf_Half,
+        pub dlpi_addr: Elf_Addr,
+        pub dlpi_name: *const ::c_char,
+        pub dlpi_phdr: *const Elf_Phdr,
+        pub dlpi_phnum: Elf_Half,
     }
 }
 
