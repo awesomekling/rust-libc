@@ -368,6 +368,7 @@ pub const ENOEXEC: ::c_int = 8; /* Exec format error */
 pub const EBADF: ::c_int = 9; /* Bad fd number */
 pub const ECHILD: ::c_int = 10; /* No child processes */
 pub const EAGAIN: ::c_int = 11; /* Try again */
+pub const EWOULDBLOCK: ::c_int = 11; /* Try again */
 pub const ENOMEM: ::c_int = 12; /* Out of memory */
 pub const EACCES: ::c_int = 13; /* Permission denied */
 pub const EFAULT: ::c_int = 14; /* Bad address */
@@ -437,6 +438,7 @@ pub const EDQUOT: ::c_int = 77; /* Quota exceeded */
 pub const ENOTRECOVERABLE: ::c_int = 78; /* State not recoverable */
 pub const ECANCELED: ::c_int = 79; /* Operation cancelled */
 pub const EPROMISEVIOLATION: ::c_int = 80; /* The process has a promise violation */
+pub const ESTALE: ::c_int = 81; /* Stale network file handle */
 
 // fcntl.h
 pub const F_DUPFD: ::c_int = 0;
