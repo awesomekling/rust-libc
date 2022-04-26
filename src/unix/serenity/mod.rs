@@ -1,3 +1,6 @@
+extern crate serenity_proc_macros;
+use self::serenity_proc_macros::generate_errno_definitions;
+
 pub type c_char = i8;
 pub type c_long = i64;
 pub type c_ulong = u64;
@@ -357,86 +360,15 @@ pub const RTLD_GLOBAL: ::c_int = 0x0100;
 pub const RTLD_LOCAL: ::c_int = 0x0000;
 
 // errno.h
-pub const EPERM: ::c_int = 1; /* Operation not permitted */
-pub const ENOENT: ::c_int = 2; /* No such file or directory */
-pub const ESRCH: ::c_int = 3; /* No such process */
-pub const EINTR: ::c_int = 4; /* Interrupted syscall */
-pub const EIO: ::c_int = 5; /* I/O error */
-pub const ENXIO: ::c_int = 6; /* No such device or address */
-pub const E2BIG: ::c_int = 7; /* Argument list too long */
-pub const ENOEXEC: ::c_int = 8; /* Exec format error */
-pub const EBADF: ::c_int = 9; /* Bad fd number */
-pub const ECHILD: ::c_int = 10; /* No child processes */
-pub const EAGAIN: ::c_int = 11; /* Try again */
-pub const ENOMEM: ::c_int = 12; /* Out of memory */
-pub const EACCES: ::c_int = 13; /* Permission denied */
-pub const EFAULT: ::c_int = 14; /* Bad address */
-pub const ENOTBLK: ::c_int = 15; /* Block device required */
-pub const EBUSY: ::c_int = 16; /* Device or resource busy */
-pub const EEXIST: ::c_int = 17; /* File already exists */
-pub const EXDEV: ::c_int = 18; /* Cross-device link */
-pub const ENODEV: ::c_int = 19; /* No such device */
-pub const ENOTDIR: ::c_int = 20; /* Not a directory */
-pub const EISDIR: ::c_int = 21; /* Is a directory */
-pub const EINVAL: ::c_int = 22; /* Invalid argument */
-pub const ENFILE: ::c_int = 23; /* File table overflow */
-pub const EMFILE: ::c_int = 24; /* Too many open files */
-pub const ENOTTY: ::c_int = 25; /* Not a TTY */
-pub const ETXTBSY: ::c_int = 26; /* Text file busy */
-pub const EFBIG: ::c_int = 27; /* File too large */
-pub const ENOSPC: ::c_int = 28; /* No space left on device */
-pub const ESPIPE: ::c_int = 29; /* Illegal seek */
-pub const EROFS: ::c_int = 30; /* Read-only filesystem */
-pub const EMLINK: ::c_int = 31; /* Too many links */
-pub const EPIPE: ::c_int = 32; /* Broken pipe */
-pub const ERANGE: ::c_int = 33; /* Range error */
-pub const ENAMETOOLONG: ::c_int = 34; /* Name too long */
-pub const ELOOP: ::c_int = 35; /* Too many symlinks */
-pub const EOVERFLOW: ::c_int = 36; /* Overflow */
-pub const EOPNOTSUPP: ::c_int = 37; /* Operation not supported */
-pub const ENOSYS: ::c_int = 38; /* No such syscall */
-pub const ENOTIMPL: ::c_int = 39; /* Not implemented */
-pub const EAFNOSUPPORT: ::c_int = 40; /* Address family not supported */
-pub const ENOTSOCK: ::c_int = 41; /* Not a socket */
-pub const EADDRINUSE: ::c_int = 42; /* Address in use */
-pub const ENOTEMPTY: ::c_int = 43; /* Directory not empty */
-pub const EDOM: ::c_int = 44; /* Math argument out of domain */
-pub const ECONNREFUSED: ::c_int = 45; /* Connection refused */
-pub const EHOSTDOWN: ::c_int = 46; /* Host is down */
-pub const EADDRNOTAVAIL: ::c_int = 47; /* Address not available */
-pub const EISCONN: ::c_int = 48; /* Already connected */
-pub const ECONNABORTED: ::c_int = 49; /* Connection aborted */
-pub const EALREADY: ::c_int = 50; /* Connection already in progress */
-pub const ECONNRESET: ::c_int = 51; /* Connection reset */
-pub const EDESTADDRREQ: ::c_int = 52; /* Destination address required */
-pub const EHOSTUNREACH: ::c_int = 53; /* Host unreachable */
-pub const EILSEQ: ::c_int = 54; /* Illegal byte sequence */
-pub const EMSGSIZE: ::c_int = 55; /* Message size */
-pub const ENETDOWN: ::c_int = 56; /* Network down */
-pub const ENETUNREACH: ::c_int = 57; /* Network unreachable */
-pub const ENETRESET: ::c_int = 58; /* Network reset */
-pub const ENOBUFS: ::c_int = 59; /* No buffer space */
-pub const ENOLCK: ::c_int = 60; /* No lock available */
-pub const ENOMSG: ::c_int = 61; /* No message */
-pub const ENOPROTOOPT: ::c_int = 62; /* No protocol option */
-pub const ENOTCONN: ::c_int = 63; /* Not connected */
-pub const ESHUTDOWN: ::c_int = 64; /* Transport endpoint has shutdown */
-pub const ETOOMANYREFS: ::c_int = 65; /* Too many references */
-pub const ESOCKTNOSUPPORT: ::c_int = 66; /* Socket type not supported */
-pub const EPROTONOSUPPORT: ::c_int = 67; /* Protocol not supported */
-pub const EDEADLK: ::c_int = 68; /* Resource deadlock would occur */
-pub const ETIMEDOUT: ::c_int = 69; /* Timed out */
-pub const EPROTOTYPE: ::c_int = 70; /* Wrong protocol type */
-pub const EINPROGRESS: ::c_int = 71; /* Operation in progress */
-pub const ENOTHREAD: ::c_int = 72; /* No such thread */
-pub const EPROTO: ::c_int = 73; /* Protocol error */
-pub const ENOTSUP: ::c_int = 74; /* Not supported */
-pub const EPFNOSUPPORT: ::c_int = 75; /* Protocol family not supported */
-pub const EDIRINTOSELF: ::c_int = 76; /* Cannot make directory a subdirectory of itself */
-pub const EDQUOT: ::c_int = 77; /* Quota exceeded */
-pub const ENOTRECOVERABLE: ::c_int = 78; /* State not recoverable */
-pub const ECANCELED: ::c_int = 79; /* Operation cancelled */
-pub const EPROMISEVIOLATION: ::c_int = 80; /* The process has a promise violation */
+macro_rules! errno_definitions {
+    (
+        $($value:expr, ($name:ident, $description:expr))+
+    ) => {
+        $(pub const $name: ::c_int = $value;)*
+    };
+}
+
+generate_errno_definitions!("Kernel/API/POSIX/errno.h");
 
 // fcntl.h
 pub const F_DUPFD: ::c_int = 0;

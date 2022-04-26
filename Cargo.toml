@@ -20,6 +20,7 @@ features = ["const-extern-fn", "extra_traits"]
 
 [dependencies]
 rustc-std-workspace-core = { version = "1.0.0", optional = true }
+serenity_proc_macros = { path = "src/unix/serenity/serenity_proc_macros" }
 
 [features]
 default = ["std"]
